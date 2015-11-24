@@ -1,5 +1,5 @@
 public class Biograf {
     public static void Main(String args) {
-        new Gui();
+        Gui goodtimes = new Gui();
     }
 }
