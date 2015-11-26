@@ -1,0 +1,43 @@
+Class documentation
+<---- javadoc command: ---->
+G:\Programmer\jdk\bin\javadoc.exe
+-author
+-version
+-nodeprecated
+-package
+-noindex
+-notree
+-nohelp
+-nonavbar
+-source
+1.8
+-classpath
+G:\Programmer\lib\bluejcore.jar;G:\Programmer\lib\junit-4.8.2.jar;G:\Dropbox\itu\Grundl�ggende programmering\projects\mysql.jar;G:\Programmer\lib\userlib\pi4j-core.jar;G:\Programmer\lib\userlib\pi4j-device.jar;G:\Programmer\lib\userlib\pi4j-gpio-extension.jar;G:\Programmer\lib\userlib\pi4j-service.jar;G:\Dropbox\itu\Grundl�ggende programmering\projects\Obligatoriske opgaver\project
+-d
+G:\Dropbox\itu\Grundl�ggende programmering\projects\Obligatoriske opgaver\project\doc
+-encoding
+UTF-8
+-charset
+UTF-8
+-docletpath
+G:\Programmer\lib\bjdoclet.jar
+-doclet
+bluej.doclet.doclets.formats.html.HtmlDoclet
+G:\Dropbox\itu\Grundl�ggende programmering\projects\Obligatoriske opgaver\project\MySQL.java
+<---- end of javadoc command ---->
+Loading source file G:\Dropbox\itu\Grundl�ggende programmering\projects\Obligatoriske opgaver\project\MySQL.java...
+Constructing Javadoc information...
+G:\Dropbox\itu\Grundl�ggende programmering\projects\Obligatoriske opgaver\project\MySQL.java:40: error: method getMovies() is already defined in class MySQL
+    public ArrayList<String> getMovies() {
+                             ^
+Generating G:\Dropbox\itu\Grundl�ggende programmering\projects\Obligatoriske opgaver\project\doc\MySQL.html...
+Generating G:\Dropbox\itu\Grundl�ggende programmering\projects\Obligatoriske opgaver\project\doc\package-frame.html...
+Generating G:\Dropbox\itu\Grundl�ggende programmering\projects\Obligatoriske opgaver\project\doc\package-summary.html...
+Generating G:\Dropbox\itu\Grundl�ggende programmering\projects\Obligatoriske opgaver\project\doc\constant-values.html...
+Building index for all the packages and classes...
+Building index for all classes...
+Generating G:\Dropbox\itu\Grundl�ggende programmering\projects\Obligatoriske opgaver\project\doc\allclasses-frame.html...
+Generating G:\Dropbox\itu\Grundl�ggende programmering\projects\Obligatoriske opgaver\project\doc\allclasses-noframe.html...
+Generating G:\Dropbox\itu\Grundl�ggende programmering\projects\Obligatoriske opgaver\project\doc\index.html...
+Generating G:\Dropbox\itu\Grundl�ggende programmering\projects\Obligatoriske opgaver\project\doc\stylesheet.css...
+1 warning

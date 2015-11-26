@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.params=
+comment0.target=void\ getMovies()
+comment1.params=
+comment1.target=void\ getShows()
+comment2.params=
+comment2.target=java.util.ArrayList\ getMoviesList()
+comment3.params=
+comment3.target=java.util.ArrayList\ getLengthList()
+comment4.params=
+comment4.target=java.util.ArrayList\ getIDList()
+numComments=5
