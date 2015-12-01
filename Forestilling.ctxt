@@ -1,2 +1,6 @@
 #BlueJ class context
-numComments=0
+comment0.params=showID\ showStart\ movie\ sal
+comment0.target=Forestilling(int,\ java.lang.Long,\ Movie,\ int)
+comment1.params=shows
+comment1.target=Forestilling(java.util.ArrayList)
+numComments=2

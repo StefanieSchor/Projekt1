@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.params=movieID\ movieName\ time
+comment0.target=Movie(int,\ java.lang.String,\ long)
+comment1.params=movies
+comment1.target=Movie(java.util.ArrayList)
+comment2.params=
+comment2.target=java.util.ArrayList\ getMovies()
+comment3.params=
+comment3.target=void\ printMovies()
+numComments=4

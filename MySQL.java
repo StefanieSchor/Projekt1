@@ -1,5 +1,7 @@
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.*;
+import java.io.*;
 
 public class MySQL {
     // Database name and login-information
@@ -12,14 +14,8 @@ public class MySQL {
     static final String DB_URL = "jdbc:mysql://mysql.itu.dk/" + DB;
     
     // arraylists for movie names, and length.
-    private ArrayList<String> movieNames = new ArrayList<String>();
-    private ArrayList<String> movieLength = new ArrayList<String>();
-    private ArrayList<Integer> movieID = new ArrayList<Integer>();
-    
-    // arraylists for upcoming shows.
-    private ArrayList<Integer> showID = new ArrayList<Integer>();
-    private ArrayList<Date> showDate = new ArrayList<Date>();
-    private ArrayList<Time> showTime = new ArrayList<Time>();
+    public ArrayList<Forestilling> shows = new ArrayList<Forestilling>();
+    public ArrayList<Movie> movies = new ArrayList<Movie>();
     
     public void getMovies() {
         Connection connection = null;
@@ -32,11 +28,7 @@ public class MySQL {
             String sql = "SELECT * FROM movieTitles";
             ResultSet rmovies = statement.executeQuery(sql);
             while (rmovies.next()) {
-                if (rmovies.getBoolean("active")) {
-                    movieNames.add(rmovies.getString("movieName"));
-                    movieLength.add(rmovies.getString("movieLength"));
-                    movieID.add(rmovies.getInt("movieID"));
-                }
+                movies.add(new Movie(rmovies.getInt("moviekey"), rmovies.getString("movieName"), rmovies.getLong("movieLength"))); // fix the long time thing.
             }
         }
         catch (Exception e) {
@@ -52,13 +44,11 @@ public class MySQL {
             connection = DriverManager.getConnection(DB_URL, USER, PASS);
             statement = connection.createStatement();
             
-            String sql = "SELECT * FROM forestillinger";
+            String sql = "SELECT * FROM showList";
             ResultSet rshows = statement.executeQuery(sql);
             while (rshows.next()) {
                 if (!rshows.getBoolean("shown")) {
-                    showID.add(rshows.getInt("movieID"));
-                    showDate.add(rshows.getDate("Date"));
-                    showTime.add(rshows.getTime("startTime"));
+                    shows.add(new Forestilling(rshows.getInt("showID"), rshows.getLong("startTime"), movies.get(rshows.getInt("movieID")-1), rshows.getInt("sal")));
                 }
             }
         }
@@ -67,15 +57,44 @@ public class MySQL {
         }
     }
     
-    public ArrayList<String> getMoviesList() {
-        return movieNames;
+    public void createShow(int showID) {
+        Connection connection = null;
+        Statement statement = null;
+        try {
+            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+            connection = DriverManager.getConnection(DB_URL, USER, PASS);
+            statement = connection.createStatement();
+            
+            String sql = "SELECT * FROM showList WHERE showID = " + showID;
+            ResultSet rStepOne = statement.executeQuery(sql);
+            while (rStepOne != null && rStepOne.next()) {
+                int salID = rStepOne.getInt("sal");
+                String sqlStepTwo = "SELECT * FROM sal WHERE salId = " + salID;
+                ResultSet rStepTwo = statement.executeQuery(sqlStepTwo);
+                while (rStepTwo.next()) {
+                    int rows = rStepTwo.getInt("rows");
+                    int seatsInRow = rStepTwo.getInt("seatsInRow");
+                    String sqlStepThree = "CREATE TABLE show_id" + showID + " (seatID int(11) PRIMARY KEY auto_increment, occupied int(11) NOT NULL)";
+                    statement.executeQuery(sqlStepThree);
+                    String sqlStepFour = " INSERT INTO show_id" + showID + " (occupied) VALUES (0)";
+                    for (int i = 0; i < rows * seatsInRow; i++) {
+                        statement.executeQuery(sqlStepFour);
+                    }
+                    }
+            }
+            }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
     
-    public ArrayList<String> getLengthList() {
-        return movieLength;
+    public void sendMovies() {
+            Movie movie = new Movie(movies);
     }
     
-    public ArrayList<Integer> getIDList() {
-        return movieID;
+    public void sendShows() {
+        Forestilling forestillinger = new Forestilling(shows);
     }
+    
+    
 }
