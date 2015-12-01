@@ -16,6 +16,7 @@ public class MySQL {
     // arraylists for movie names, and length.
     public ArrayList<Forestilling> shows = new ArrayList<Forestilling>();
     public ArrayList<Movie> movies = new ArrayList<Movie>();
+    public ArrayList<Sal> sale = new ArrayList<Sal>();
     
     public void getMovies() {
         Connection connection = null;
@@ -48,7 +49,7 @@ public class MySQL {
             ResultSet rshows = statement.executeQuery(sql);
             while (rshows.next()) {
                 if (!rshows.getBoolean("shown")) {
-                    shows.add(new Forestilling(rshows.getInt("showID"), rshows.getLong("startTime"), movies.get(rshows.getInt("movieID")-1), rshows.getInt("sal")));
+                    shows.add(new Forestilling(rshows.getInt("showID"), rshows.getLong("startTime"), movies.get(rshows.getInt("movieID")-1), sale.get(rshows.getInt("sal")-1)));
                 }
             }
         }
@@ -88,13 +89,34 @@ public class MySQL {
         }
     }
     
+    public void getSales() {
+        Connection connection = null;
+        Statement statement = null;
+        try {
+            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+            connection = DriverManager.getConnection(DB_URL, USER, PASS);
+            statement = connection.createStatement();
+            
+            String sql = "SELECT * FROM sal";
+            ResultSet rSal = statement.executeQuery(sql);
+            while (rSal != null && rSal.next()) {
+                sale.add(new Sal(rSal.getInt("salId"), rSal.getInt("rows"), rSal.getInt("seatsInRow")));
+            }
+            }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+        
     public void sendMovies() {
-            Movie movie = new Movie(movies);
+        Movie movie = new Movie(movies);
     }
     
     public void sendShows() {
         Forestilling forestillinger = new Forestilling(shows);
     }
     
-    
+    public void sendSales() {
+        Sal salesList= new Sal(sale);
+    }
 }
