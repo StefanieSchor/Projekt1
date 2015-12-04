@@ -1,7 +1,9 @@
 import java.awt.*;
+import java.awt.event.*;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import javax.swing.*;
 import javax.swing.border.*;
-import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 import java.text.SimpleDateFormat;
@@ -11,14 +13,14 @@ import java.time.LocalDate;
  * Stefanie, Lucas og Niels - Projekt 1. semester - Biograf
  * Denne klasse håndterer brugergrænsefladen, som ekspedienten håndterer reservationer med.
  */
-public class Gui extends JComponent implements ItemListener {
+public class Gui extends JPanel implements ItemListener {
     private JFrame frame;
     private int width;
     private int height;
     private ArrayList<Forestilling> shownShows;
     private int antal;
     private int padding;
-    private Image image;
+    private BufferedImage image;
     private JPanel topMenu;
     private JPanel mainWindow;
     private int currentPage;
@@ -43,8 +45,8 @@ public class Gui extends JComponent implements ItemListener {
                 movieNames[i+1] = movie.getMovies().get(i).movieName;
         }
         padding = 20;
-        image = Toolkit.getDefaultToolkit().createImage("background.jpg");
-        image = image.getScaledInstance(1000, 667, image.SCALE_DEFAULT);
+        // image = Toolkit.getDefaultToolkit().createImage("background.jpg");
+        // image = image.getScaledInstance(1000, 667, image.SCALE_DEFAULT);
         chosenDateIndex = 0;
         chosenMovieIndex = 0;
                
@@ -55,23 +57,30 @@ public class Gui extends JComponent implements ItemListener {
         topMenu = new JPanel(new FlowLayout(FlowLayout.CENTER, width/16, 0));
         topMenu.setBackground(Color.DARK_GRAY);
         
-        String itemList[] = new String[] {"front", "Reserver", "Titler", "Ret reservation"};
-        JComboBox<String> cb = new JComboBox<>(itemList);
-        cb.addItemListener(this);
-        
-        /**
         JButton reserver = new JButton("Reserver");
-        reserver.addActionListener(this);
+        reserver.addActionListener(new ActionListener() { 
+            public void actionPerformed(ActionEvent e) { 
+                CardLayout cl = (CardLayout)(mainWindow.getLayout());
+                cl.show(mainWindow, (String)e.getActionCommand());;             
+            }});
         reserver.setPreferredSize(new Dimension(width/4, height/7));
         
         
         JButton titler = new JButton("Titler");
-        titler.addActionListener(this);
+        titler.addActionListener(new ActionListener() { 
+            public void actionPerformed(ActionEvent e) { 
+                CardLayout cl = (CardLayout)(mainWindow.getLayout());
+                cl.show(mainWindow, (String)e.getActionCommand());; 
+            }});
         titler.setPreferredSize(new Dimension(width/4, height/7));
         
         
         JButton resRet = new JButton("Ret reservation");
-        resRet.addActionListener(this);
+        resRet.addActionListener(new ActionListener() { 
+            public void actionPerformed(ActionEvent e) { 
+                CardLayout cl = (CardLayout)(mainWindow.getLayout());
+                cl.show(mainWindow, (String)e.getActionCommand());; 
+            } });
         resRet.setPreferredSize(new Dimension(width/4, height/7));
         
         if (currentPage == 2)
@@ -80,12 +89,11 @@ public class Gui extends JComponent implements ItemListener {
             titler.setBackground(Color.RED);
         else if (currentPage == 4)
             resRet.setBackground(Color.RED);
-            
+        
         topMenu.add(reserver);
         topMenu.add(titler);
         topMenu.add(resRet);
-        */
-        topMenu.add(cb);
+        
         return topMenu;
     }
     
@@ -95,10 +103,12 @@ public class Gui extends JComponent implements ItemListener {
         
         side.setLayout(new BorderLayout());     
         side.add(topMenu, BorderLayout.NORTH);
-        side.add(this);
+        
         JPanel mainWindow1 = new JPanel(); // frontpage
         
+        
         JPanel mainWindow2 = new JPanel(new BorderLayout());
+        mainWindow2.setBackground(Color.DARK_GRAY);
         JPanel westPanel = new JPanel();
         // westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
         
@@ -130,11 +140,18 @@ public class Gui extends JComponent implements ItemListener {
         
         mainWindow2.add(westPanel, BorderLayout.WEST);
         mainWindow2.add(centerPanel, BorderLayout.CENTER);
-        // for (Forestilling forestilling : )
+        /** for (Forestilling forestilling : shownShows) {
+         *      
+         *  }
+         */
+        JPanel mainWindow3 = new JPanel();
+        JPanel mainWindow4 = new JPanel();
         
         mainWindow = new JPanel(new CardLayout());
         mainWindow.add(mainWindow1, "front");
         mainWindow.add(mainWindow2, "Reserver");
+        mainWindow.add(mainWindow3, "Titler");
+        mainWindow.add(mainWindow4, "Ret reservation");
         mainWindow.setPreferredSize(new Dimension((width * 100)/ 80, (height - height * 100) / 30));
         side.add(mainWindow);
     }
@@ -150,20 +167,9 @@ public class Gui extends JComponent implements ItemListener {
         frame.setVisible(true);
     }
     
-    public void paint(Graphics g) {
+    @Override
+    public void paintComponent(Graphics g) {
         g.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), this);
-    }
-    
-    public void goToReservation() {
-        makeReservationPage();
-    }
-    
-    public void goToTitles() {
-        makeTitlePage();
-    }
-    
-    public void goToChange() {
-        makeChangePage();
     }
     
     public void itemStateChanged(ItemEvent e) {
@@ -171,53 +177,6 @@ public class Gui extends JComponent implements ItemListener {
         cl.show(mainWindow, (String)e.getItem());
     }
     
-    public void makeReservationPage() {
-        frame = new JFrame("Cinematron");
-        Container frontPage = frame.getContentPane();
-        
-        topMenu();
-        
-        frontPage.setLayout(new BorderLayout());     
-        frontPage.add(topMenu, BorderLayout.NORTH);
-        
-        mainWindow = new JPanel(new BorderLayout());
-        JPanel westPanel = new JPanel();
-        // westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
-        
-        JComboBox<String> dateBox = new JComboBox<>(nextDays);
-        dateBox.addItemListener(
-            new ItemListener() {
-                public void itemStateChanged(ItemEvent event) {
-                    if(event.getStateChange() == ItemEvent.SELECTED) {
-                        chosenDateIndex = dateBox.getSelectedIndex();
-                        showShows(chosenDateIndex, chosenMovieIndex);
-                    }
-        }});
-        westPanel.add(dateBox);
-        
-        JComboBox<String> movieBox = new JComboBox<>(movieNames);
-        movieBox.setEditable(false);
-        movieBox.addItemListener(
-            new ItemListener() {
-                public void itemStateChanged(ItemEvent event) {
-                    if(event.getStateChange() == ItemEvent.SELECTED) {
-                        chosenMovieIndex = movieBox.getSelectedIndex();
-                        showShows(chosenDateIndex, chosenMovieIndex);
-                    }
-        }});
-        westPanel.add(movieBox);
-        
-        JPanel centerPanel = new JPanel();
-        // for (Forestilling forestilling : )
-        
-        mainWindow.add(westPanel, BorderLayout.WEST);
-        mainWindow.add(centerPanel, BorderLayout.CENTER);
-        frame.add(mainWindow);
-        frame.setSize(width, height);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);       
-    }
-
     public String[] getNext20String() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         LocalDate aDay = null;
@@ -234,18 +193,6 @@ public class Gui extends JComponent implements ItemListener {
         return nextDays;
     }
     
-    public String dateToString(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
-        LocalDate ld = LocalDate.parse(format.format(date));
-        return format.format(date);
-    }
-    
-    public LocalDate stringToDate(String string) {
-        SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
-        LocalDate date = LocalDate.parse(format.format(string));
-        return LocalDate.parse(format.format(date));
-    }
-    
     public void showShows(int dateIndex, int movieIndex) {
         shownShows = new ArrayList<Forestilling>();
         if (dateIndex != 0 || movieIndex != 0) {
@@ -258,14 +205,6 @@ public class Gui extends JComponent implements ItemListener {
         for (Forestilling show : shownShows) {
             System.out.println(show.getShowID());
         };
-    }
-    
-    public void makeTitlePage() {
-        
-    }
-    
-    public void makeChangePage() {
-        
     }
     
     public void setWindowSize(int width, int height) {
