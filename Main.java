@@ -6,6 +6,7 @@ public class Main {
         sqlhenter.sendMovies();
         sqlhenter.getShows();
         sqlhenter.sendShows();
-        new Gui();
+        Gui gui = new Gui();
+        gui.makeGui();
     }
 }

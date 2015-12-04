@@ -11,7 +11,7 @@ import java.time.LocalDate;
  * Stefanie, Lucas og Niels - Projekt 1. semester - Biograf
  * Denne klasse håndterer brugergrænsefladen, som ekspedienten håndterer reservationer med.
  */
-public class Gui extends JComponent {
+public class Gui extends JComponent implements ItemListener {
     private JFrame frame;
     private int width;
     private int height;
@@ -40,9 +40,8 @@ public class Gui extends JComponent {
             if (i == -1)
                 movieNames[i+1] = "Pick movie";
             else
-            movieNames[i+1] = movie.getMovies().get(i).movieName;
+                movieNames[i+1] = movie.getMovies().get(i).movieName;
         }
-        makeReservationPage();
         padding = 20;
         image = Toolkit.getDefaultToolkit().createImage("background.jpg");
         image = image.getScaledInstance(1000, 667, image.SCALE_DEFAULT);
@@ -56,18 +55,23 @@ public class Gui extends JComponent {
         topMenu = new JPanel(new FlowLayout(FlowLayout.CENTER, width/16, 0));
         topMenu.setBackground(Color.DARK_GRAY);
         
+        String itemList[] = new String[] {"front", "Reserver", "Titler", "Ret reservation"};
+        JComboBox<String> cb = new JComboBox<>(itemList);
+        cb.addItemListener(this);
+        
+        /**
         JButton reserver = new JButton("Reserver");
-        reserver.addActionListener(new ActionListener() { public void actionPerformed(ActionEvent e) { goToReservation(); } });
+        reserver.addActionListener(this);
         reserver.setPreferredSize(new Dimension(width/4, height/7));
         
         
         JButton titler = new JButton("Titler");
-        titler.addActionListener(new ActionListener() { public void actionPerformed(ActionEvent e) { goToTitles(); } });
+        titler.addActionListener(this);
         titler.setPreferredSize(new Dimension(width/4, height/7));
         
         
         JButton resRet = new JButton("Ret reservation");
-        resRet.addActionListener(new ActionListener() { public void actionPerformed(ActionEvent e) { goToChange(); } });
+        resRet.addActionListener(this);
         resRet.setPreferredSize(new Dimension(width/4, height/7));
         
         if (currentPage == 2)
@@ -80,28 +84,69 @@ public class Gui extends JComponent {
         topMenu.add(reserver);
         topMenu.add(titler);
         topMenu.add(resRet);
+        */
+        topMenu.add(cb);
         return topMenu;
     }
     
-    public void makeFrontPage()  {
-        currentPage = 1;
-        frame = new JFrame("Cinematron");
-        Container frontPage = frame.getContentPane();
-        
+    public void makeFrontPage(Container side)  {
         topMenu();
-        
-        frontPage.setLayout(new BorderLayout());     
-        frontPage.add(topMenu, BorderLayout.NORTH);
         // 
-        mainWindow = new JPanel();
+        
+        side.setLayout(new BorderLayout());     
+        side.add(topMenu, BorderLayout.NORTH);
+        side.add(this);
+        JPanel mainWindow1 = new JPanel(); // frontpage
+        
+        JPanel mainWindow2 = new JPanel(new BorderLayout());
+        JPanel westPanel = new JPanel();
+        // westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
+        
+        JComboBox<String> dateBox = new JComboBox<>(nextDays);
+        dateBox.addItemListener(
+            new ItemListener() {
+                public void itemStateChanged(ItemEvent event) {
+                    if(event.getStateChange() == ItemEvent.SELECTED) {
+                        chosenDateIndex = dateBox.getSelectedIndex();
+                        showShows(chosenDateIndex, chosenMovieIndex);
+                    }
+        }});
+        westPanel.add(dateBox);
+        
+        JComboBox<String> movieBox = new JComboBox<>(movieNames);
+        movieBox.setEditable(false);
+        movieBox.addItemListener(
+            new ItemListener() {
+                public void itemStateChanged(ItemEvent event) {
+                    if(event.getStateChange() == ItemEvent.SELECTED) {
+                        chosenMovieIndex = movieBox.getSelectedIndex();
+                        showShows(chosenDateIndex, chosenMovieIndex);
+                    }
+        }});
+        westPanel.add(movieBox);
+        
+        JPanel centerPanel = new JPanel();
+        
+        
+        mainWindow2.add(westPanel, BorderLayout.WEST);
+        mainWindow2.add(centerPanel, BorderLayout.CENTER);
+        // for (Forestilling forestilling : )
+        
+        mainWindow = new JPanel(new CardLayout());
+        mainWindow.add(mainWindow1, "front");
+        mainWindow.add(mainWindow2, "Reserver");
         mainWindow.setPreferredSize(new Dimension((width * 100)/ 80, (height - height * 100) / 30));
-        
-        frontPage.add(mainWindow, BorderLayout.CENTER);
-        
-        // vinduesstørrelse mm.
-        frame.setSize(width, height);
+        side.add(mainWindow);
+    }
+    
+    public void makeGui() {
+        frame = new JFrame("Cinematron");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(this);
+        Gui gui = new Gui();
+        gui.makeFrontPage(frame.getContentPane());
+        
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(width, height);
         frame.setVisible(true);
     }
     
@@ -119,6 +164,11 @@ public class Gui extends JComponent {
     
     public void goToChange() {
         makeChangePage();
+    }
+    
+    public void itemStateChanged(ItemEvent e) {
+        CardLayout cl = (CardLayout)(mainWindow.getLayout());
+        cl.show(mainWindow, (String)e.getItem());
     }
     
     public void makeReservationPage() {
@@ -217,7 +267,6 @@ public class Gui extends JComponent {
     public void makeChangePage() {
         
     }
-    
     
     public void setWindowSize(int width, int height) {
         width = width;
