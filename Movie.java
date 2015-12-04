@@ -16,7 +16,7 @@ public class Movie extends Date {
         this.movies = movies;
     }
     
-    public ArrayList<Movie> getMovies() {
+    public static ArrayList<Movie> getMovies() {
         return movies;
     }
     
@@ -25,5 +25,13 @@ public class Movie extends Date {
             System.out.println(movie.movieName);
             System.out.println(movie.movieLength);
         }
+    }
+    
+    public String getName() {
+        return movieName;
+    }
+    
+    public Movie getMovie() {
+        return this;
     }
 }

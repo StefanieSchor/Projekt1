@@ -49,7 +49,29 @@ public class MySQL {
             ResultSet rshows = statement.executeQuery(sql);
             while (rshows.next()) {
                 if (!rshows.getBoolean("shown")) {
-                    shows.add(new Forestilling(rshows.getInt("showID"), rshows.getLong("startTime"), movies.get(rshows.getInt("movieID")-1), sale.get(rshows.getInt("sal")-1)));
+                    shows.add(new Forestilling(rshows.getInt("showID"), rshows.getDate("date"), rshows.getLong("startTime"), movies.get(rshows.getInt("movieID")-1), sale.get(rshows.getInt("sal")-1)));
+                }
+            }
+        }
+        catch (Exception e) {
+            System.out.println("IT DIEDED!!!");
+        }
+    }
+    
+    
+    public void getDate() {
+        Connection connection = null;
+        Statement statement = null;
+        try {
+            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+            connection = DriverManager.getConnection(DB_URL, USER, PASS);
+            statement = connection.createStatement();
+            ArrayList<java.util.Date> dates = new ArrayList<java.util.Date>();
+            String sql = "SELECT * FROM showList";
+            ResultSet rshows = statement.executeQuery(sql);
+            while (rshows.next()) {
+                if (!rshows.getBoolean("shown")) {
+                    dates.add(rshows.getDate("date"));
                 }
             }
         }

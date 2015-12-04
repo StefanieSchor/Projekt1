@@ -1,6 +1,14 @@
 #BlueJ class context
-comment0.params=showID\ showStart\ movie\ sal
-comment0.target=Forestilling(int,\ java.lang.Long,\ Movie,\ Sal)
+comment0.params=showID\ date\ showStart\ movie\ sal
+comment0.target=Forestilling(int,\ java.util.Date,\ java.lang.Long,\ Movie,\ Sal)
 comment1.params=shows
 comment1.target=Forestilling(java.util.ArrayList)
-numComments=2
+comment2.params=
+comment2.target=java.util.ArrayList\ getShows()
+comment3.params=
+comment3.target=java.util.Date\ getShowDate()
+comment4.params=
+comment4.target=Movie\ getMovie()
+comment5.params=
+comment5.target=int\ getShowID()
+numComments=6
