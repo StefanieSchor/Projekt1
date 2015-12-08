@@ -12,6 +12,7 @@ public class Forestilling {
     private java.util.Date date;
     public java.util.Date[] dates;
     public ArrayList<java.util.Date> showDates;
+    private boolean[][] pladser;
         
     public Forestilling(int showID, java.util.Date date, Long showStart, Movie movie, Sal sal) {
         this.sal = sal;
@@ -19,6 +20,7 @@ public class Forestilling {
         this.movie = movie;
         this.showStart = showStart;
         this.date = date;
+        this.pladser = makeSeatings();
     }
     
     public Forestilling(ArrayList<Forestilling> shows) {
@@ -54,5 +56,24 @@ public class Forestilling {
     
     public int getShowID() {
         return this.showID;
+    }
+    
+    public static Forestilling findById(int id) {
+        for (Forestilling show : shows) {
+            if (id == show.showID)
+                return show;
+        }
+        return null;
+    }
+    
+    public boolean[][] makeSeatings() {
+       int rows = sal.getRows();
+       int seatsInRow = sal.getSeatsInRow();
+       pladser = new boolean[rows][seatsInRow];
+       return pladser;
+    }
+    
+    public boolean[][] getSeatings() {
+        return this.pladser;
     }
 }

@@ -18,4 +18,12 @@ public class Sal {
     public int getSalId() {
         return this.salId;
     }
+    
+    public int getRows(){
+       return this.rows;
+    }
+   
+    public int getSeatsInRow() {
+       return this.seatsInRow;
+    }
 }
