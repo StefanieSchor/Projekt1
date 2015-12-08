@@ -44,6 +44,14 @@ public class Forestilling {
         return movie;
     }
     
+    public Long getShowStart() {
+        return this.showStart;
+    }
+    
+    public Sal getSal() {
+        return this.sal;
+    }
+    
     public int getShowID() {
         return this.showID;
     }

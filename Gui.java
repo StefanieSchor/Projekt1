@@ -32,7 +32,9 @@ public class Gui extends JPanel implements ItemListener {
     JComboBox<String> DateBox;
     int chosenDateIndex;
     int chosenMovieIndex;
-    
+    JPanel centerPanel;
+    JPanel mainWindow2;
+    CardLayout cl;
     public Gui() {
         getScreenSize();
         next20Dates = new Date[] {null, new Date(116, 0, 1), new Date(116, 0, 2), new Date(116, 0, 3)};
@@ -135,15 +137,12 @@ public class Gui extends JPanel implements ItemListener {
         }});
         westPanel.add(movieBox);
         
-        JPanel centerPanel = new JPanel();
+        centerPanel = new JPanel();
         
         
-        mainWindow2.add(westPanel, BorderLayout.WEST);
+        mainWindow2.add(westPanel, BorderLayout.NORTH);
         mainWindow2.add(centerPanel, BorderLayout.CENTER);
-        /** for (Forestilling forestilling : shownShows) {
-         *      
-         *  }
-         */
+        
         JPanel mainWindow3 = new JPanel();
         JPanel mainWindow4 = new JPanel();
         
@@ -154,6 +153,12 @@ public class Gui extends JPanel implements ItemListener {
         mainWindow.add(mainWindow4, "Ret reservation");
         mainWindow.setPreferredSize(new Dimension((width * 100)/ 80, (height - height * 100) / 30));
         side.add(mainWindow);
+    }
+    
+    public String dateToText(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        LocalDate aDay = LocalDate.parse(format.format(date));
+        return aDay.toString().substring(6,10);
     }
     
     public void makeGui() {
@@ -173,7 +178,7 @@ public class Gui extends JPanel implements ItemListener {
     }
     
     public void itemStateChanged(ItemEvent e) {
-        CardLayout cl = (CardLayout)(mainWindow.getLayout());
+        cl = (CardLayout)(mainWindow.getLayout());
         cl.show(mainWindow, (String)e.getItem());
     }
     
@@ -205,6 +210,23 @@ public class Gui extends JPanel implements ItemListener {
         for (Forestilling show : shownShows) {
             System.out.println(show.getShowID());
         };
+        
+        JButton movieButtons[] = new JButton[shownShows.size()];
+        JLabel dateLabel;
+        JLabel nameLabel;
+        JLabel salAndFreeSeats;
+        for (int i = 0; i < shownShows.size(); i++) {
+            dateLabel = new JLabel(dateToText(shownShows.get(i).getShowDate()) + " kl. " + shownShows.get(i).getShowStart());
+            nameLabel = new JLabel(shownShows.get(i).getMovie().getName());
+            salAndFreeSeats = new JLabel(shownShows.get(i).getSal().getSalId() + "");
+            movieButtons[i] = new JButton();
+            movieButtons[i].setLayout(new BorderLayout());
+            movieButtons[i].add(BorderLayout.NORTH, dateLabel);
+            movieButtons[i].add(BorderLayout.CENTER, salAndFreeSeats);
+            movieButtons[i].add(BorderLayout.SOUTH, nameLabel);
+            centerPanel.add(movieButtons[i]);
+        }
+        cl.show(mainWindow, "Reserver");
     }
     
     public void setWindowSize(int width, int height) {

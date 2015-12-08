@@ -14,4 +14,8 @@ public class Sal {
     public Sal(ArrayList<Sal> sale) {
         this.sale = sale;
     }
+    
+    public int getSalId() {
+        return this.salId;
+    }
 }
