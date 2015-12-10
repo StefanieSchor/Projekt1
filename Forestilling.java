@@ -77,40 +77,42 @@ public class Forestilling {
         return this.pladser;
     }
 
-    public void setReserved(int[][] seats, int[] rows){
+    public void setReserved(ArrayList<int[]> seats, ArrayList<Integer> rows){
         boolean allSeatsFree = true;
-        for(int i = 0; i < rows.length; i++){
-            for(int o = 0; o < seats[i].length; o++){
-                if(pladser[rows[i]][seats[i][o]] == true) {
+        for(int i = 0; i < rows.size(); i++){
+            for(int o = 0; o < seats.get(i).length; o++){
+                if(pladser[rows.get(i)][seats.get(i)[o]] == true) {
                     allSeatsFree = false;
+                    System.out.println(allSeatsFree);
                 }
             }
         }
         if  (allSeatsFree) {
-            for(int i = 0; i < rows.length; i++){
-                for(int o = 0; o < seats[i].length; o++){
+            for(int i = 0; i < rows.size(); i++){
+                for(int o = 0; o < seats.get(i).length; o++){
                     if(allSeatsFree) {
-                        pladser[rows[i]][seats[i][o]] = true;
+                        pladser[rows.get(i)][seats.get(i)[o]] = true;
+                        System.out.println(pladser[rows.get(i)][seats.get(i)[o]]);
                     }
                 }
             }
         }
     }
 
-    public void removeReserved(int[][] seats, int[] rows){
+    public void removeReserved(ArrayList<int[]> seats, ArrayList<Integer> rows){
         boolean allSeatsTaken = true;
-        for(int i = 0; i < rows.length; i++){
-            for(int o = 0; o < seats[i].length; o++){
-                if(pladser[rows[i]][seats[i][o]] == false) {
+        for(int i = 0; i < rows.size(); i++){
+            for(int o = 0; o < seats.get(i).length; o++){
+                if(pladser[rows.get(i)][seats.get(i)[o]] == false) {
                     allSeatsTaken = false;
                 }
             }
         }
         if  (allSeatsTaken) {
-            for(int i = 0; i < rows.length; i++){
-                for(int o = 0; o < seats[i].length; o++){
+            for(int i = 0; i < rows.size(); i++){
+                for(int o = 0; o < seats.get(i).length; o++){
                     if(allSeatsTaken) {
-                        pladser[rows[i]][seats[i][o]] = false;
+                        pladser[rows.get(i)][seats.get(i)[o]] = false;
                     }
                 }
             }
@@ -120,7 +122,7 @@ public class Forestilling {
     public boolean checkIfFree(int row, int[] seats){
         boolean taken = false;
         for(int i = 0; i < seats[seats.length-1]; i++) {
-            if(pladser[row][i]) {
+            if(pladser[row][seats[i]]) {
                 taken = true;
             }
         }

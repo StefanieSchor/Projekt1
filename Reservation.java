@@ -2,31 +2,17 @@
 import java.util.*;
 
 public class Reservation {
-   private int numberOfSeats;
    private Forestilling forestilling;
-   int[][] seats;
-   int[] rows;
+   ArrayList<int[]> seats;
+   ArrayList<Integer> rows;
    private String tel;
    private String name;
    public static ArrayList<Reservation> reservations;
    
-   public Reservation(Forestilling forestilling, int[][] seats, int[] rows, int numberOfSeats, String tel, String name) {
+   public Reservation(Forestilling forestilling, ArrayList<int[]> seats, ArrayList<Integer> rows, String tel) {
        this.forestilling = forestilling;
        this.seats = seats;
        this.rows = rows;
-       this.numberOfSeats = numberOfSeats;
-       this.tel = tel;
-       this.name = name;
-       this.reservations = new ArrayList<Reservation>();
-       
-       forestilling.setReserved(seats, rows);
-   }
-   
-   public Reservation(Forestilling forestilling, int[][] seats, int[] rows, int numberOfSeats, String tel) {
-       this.forestilling = forestilling;
-       this.seats = seats;
-       this.rows = rows;
-       this.numberOfSeats = numberOfSeats;
        this.tel = tel;
        this.name = null;
        this.reservations = new ArrayList<Reservation>();
@@ -34,27 +20,13 @@ public class Reservation {
        
        forestilling.setReserved(seats, rows);
    }
-  
-   public void editReservation(Forestilling forestilling, int[][] seats, int[] rows, int numberOfSeats, String tel, String name) {
-       forestilling.removeReserved(seats, rows);
-       
-       this.forestilling = forestilling;
-       this.seats = seats;
-       this.rows = rows;
-       this.numberOfSeats = numberOfSeats;
-       this.tel = tel;
-       this.name = name;
-       
-       forestilling.setReserved(seats, rows);
-    }
-           
+          
    public void removeReservation() {
        forestilling.removeReserved(seats, rows);
       
        this.forestilling = null;
        this.seats = null;
        this.rows = null;
-       this.numberOfSeats = 0;
        this.tel = null;
        this.name = null;
        
@@ -72,20 +44,16 @@ public class Reservation {
    public static ArrayList<Reservation> getReservations() {
        return reservations;
    }
-  
-   public int getNumberOfSeats() {
-       return numberOfSeats;
-   }
-   
+     
    public Forestilling getForestilling() {
        return forestilling;
    }
    
-   public int[][] getSeats() {
+   public ArrayList<int[]> getSeats() {
        return seats;
    }
    
-   public int[] getRows() {
+   public ArrayList<Integer> getRows() {
        return rows;
    }
 }

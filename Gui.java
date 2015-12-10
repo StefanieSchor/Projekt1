@@ -38,8 +38,9 @@ public class Gui extends JPanel implements ItemListener {
     JPanel mainWindow2;
     JPanel mainWindow3;
     CardLayout cl;
-    boolean seats[][];
-
+    JButton buttonArray[][];
+    boolean[][] seats;
+    
     public Gui() {
         getScreenSize();
         next20Dates = new Date[] {null, new Date(116, 0, 1), new Date(116, 0, 2), new Date(116, 0, 3)};
@@ -155,9 +156,9 @@ public class Gui extends JPanel implements ItemListener {
         centerPanel = new JPanel();
         mainWindow2.add(centerPanel, BorderLayout.CENTER);
         mainWindow2.add(westPanel, BorderLayout.WEST);
-        
+
         //Titel side
-        
+
         mainWindow3 = new JPanel(new BorderLayout());
         mainWindow3.setBackground(Color.DARK_GRAY);
         mainWindow3.setLayout(new BoxLayout(mainWindow3, BoxLayout.PAGE_AXIS));
@@ -178,7 +179,7 @@ public class Gui extends JPanel implements ItemListener {
                     }
                 });
         }        
-        
+
         JPanel mainWindow4 = new JPanel();
         //scrollbar
         JScrollPane sp = new JScrollPane(mainWindow);
@@ -323,7 +324,7 @@ public class Gui extends JPanel implements ItemListener {
 
         JComboBox<String> numberBox = new JComboBox<>(numberOptions);
         numberBox.setSelectedIndex(1);
-        JButton buttonArray[][] = new JButton[chosenShow.getSal().getRows()][chosenShow.getSal().getSeatsInRow()];
+        buttonArray = new JButton[chosenShow.getSal().getRows()][chosenShow.getSal().getSeatsInRow()];
         JPanel seatPanel = new JPanel(new GridLayout(seats.length, seats[0].length, 0, 10));
         for(int i = 0 ; i < chosenShow.getSal().getRows(); i++) {
             for (int o = 0 ; o < chosenShow.getSal().getSeatsInRow(); o++) {
@@ -373,11 +374,37 @@ public class Gui extends JPanel implements ItemListener {
             }
         }
         int row = Integer.parseInt(seat.substring(0, rowPlace));
-        int seats[] = new int[numTickets];
+        int seatsArray[] = new int[numTickets];
+        
         int firstSeat = Integer.parseInt(seat.substring(rowPlace+1,seat.length()));
         for (int i = 0; i < numTickets; i++) {
-            seats[i] = firstSeat +i;
+            seatsArray[i] = firstSeat +i;
         }
-        show.checkIfFree(row, seats);
+        int moreSeats;
+        String phoneNumber = "";
+        ArrayList<int[]> seatsArrayList = new ArrayList<int[]>();
+        ArrayList<Integer> rowsArrayList = new ArrayList<Integer>();
+        int numberRows = 1;
+        if (show.checkIfFree(row, seatsArray) == false) {
+            JOptionPane opPane = new JOptionPane();
+            moreSeats = JOptionPane.showConfirmDialog(null, "Add more seats?", "Options", JOptionPane.YES_NO_OPTION);
+            if (moreSeats == 1) {
+                for (int i = 0; i < numberRows; i++) {
+                    seatsArrayList.add(seatsArray);
+                    rowsArrayList.add(row);
+                }
+                phoneNumber = JOptionPane.showInputDialog("Please enter a phonenumber");
+                new Reservation(show, seatsArrayList, rowsArrayList, phoneNumber);
+                changeSeatStatus(show, seatsArrayList, rowsArrayList);
+            }
+        }
+        
+    }
+    
+    public void changeSeatStatus(Forestilling show, ArrayList<int[]> seatsList, ArrayList<Integer> rowlist) {
+        for (int i = 0; i < rowlist.size(); i++) {
+            for(int o = 0; o < seatsList.get(i).length; o++)
+                    buttonArray[rowlist.get(i)][seatsList.get(i)[o]].setBackground(Color.RED);
+        }
     }
 }
