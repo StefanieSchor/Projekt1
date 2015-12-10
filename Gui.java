@@ -51,9 +51,7 @@ public class Gui extends JPanel implements ItemListener {
             else
                 movieNames[i+1] = movie.getMovies().get(i).movieName;
         }
-        System.out.println(movieNames.length);
-        for (int i = 0; i < movieNames.length; i++) 
-            System.out.println(i + movieNames[i]);
+
         padding = 20;
         // image = Toolkit.getDefaultToolkit().createImage("background.jpg");
         // image = image.getScaledInstance(1000, 667, image.SCALE_DEFAULT);
@@ -150,7 +148,6 @@ public class Gui extends JPanel implements ItemListener {
                 public void itemStateChanged(ItemEvent event) {
                     if(event.getStateChange() == ItemEvent.SELECTED) {
                         chosenMovieIndex = movieBox.getSelectedIndex();
-                        System.out.println(movieBox.getSelectedIndex());
                         showShows(chosenDateIndex, chosenMovieIndex);
                     }
                 }});
@@ -158,33 +155,30 @@ public class Gui extends JPanel implements ItemListener {
         centerPanel = new JPanel();
         mainWindow2.add(centerPanel, BorderLayout.CENTER);
         mainWindow2.add(westPanel, BorderLayout.WEST);
-
+        
+        //Titel side
+        
         mainWindow3 = new JPanel(new BorderLayout());
         mainWindow3.setBackground(Color.DARK_GRAY);
-
-        //movieNames = new String[Movie.getMovies().size()];
-        //for (int i = 1 ; i < movie.getMovies().size() ; i++) {
-        //    movieNames[i] = movie.getMovies().get(i-1).movieName;
-        //}
-
-        mainWindow3.setLayout(new GridLayout(movieNames.length - 1 , 3, 20, 20));
+        mainWindow3.setLayout(new BoxLayout(mainWindow3, BoxLayout.PAGE_AXIS));
+        mainWindow3.setBorder(BorderFactory.createEmptyBorder(20, 100, 20, 100));
+        mainWindow3.add(Box.createHorizontalGlue());
 
         JButton movieButtons[] = new JButton[movieNames.length - 1];
         JLabel nameLabel;
         for (int i = 1; i <= movieNames.length -1; i++) {
-            nameLabel = new JLabel(movieNames[i]);
-            movieButtons[i-1] = new JButton();
-            //movieButtons[i].setLayout(new BorderLayout());
-            movieButtons[i-1].add(BorderLayout.CENTER, nameLabel);
+            movieButtons[i-1] = new JButton(movieNames[i]);
+            movieButtons[i-1].setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
             mainWindow3.add(movieButtons[i-1]);
+            mainWindow3.add(Box.createVerticalStrut(10));
             movieButtons[i-1].addActionListener(new ActionListener()  {
                     public void actionPerformed(ActionEvent e)  {
                         JOptionPane opPane = new JOptionPane();
                         JOptionPane.showMessageDialog(frame, "Eggs are not supposed to be green.", "Movie Description", JOptionPane.PLAIN_MESSAGE);
                     }
                 });
-        }
-
+        }        
+        
         JPanel mainWindow4 = new JPanel();
         //scrollbar
         JScrollPane sp = new JScrollPane(mainWindow);
@@ -297,63 +291,71 @@ public class Gui extends JPanel implements ItemListener {
         JPanel reservationPanel = new JPanel(new BorderLayout());
         // try {
         Forestilling chosenShow = Forestilling.findById(showID);
-        
+
         JPanel northResPanel = new JPanel(new FlowLayout());
         String labelText = "Show " + showID + ", movie: " + chosenShow.getMovie().getName()+ ", date: " + dateToText(chosenShow.getShowDate());
         labelText +=  " at: " + chosenShow.getShowStart();
         JLabel showLabel = new JLabel(labelText, SwingConstants.CENTER);
         northResPanel.add(showLabel);
         reservationPanel.add(northResPanel);
-        
+
         JPanel centerResPanel = new JPanel(new BorderLayout());
-        JButton buttonarray[][] = new JButton[chosenShow.getSal().getRows()][chosenShow.getSal().getSeatsInRow()];
-        seats = chosenShow.getSeatings();
-        JPanel seatPanel = new JPanel(new GridLayout(seats.length, seats[0].length, 0, 10));
-        for(int i = 0 ; i < chosenShow.getSal().getRows(); i++) {
-            for (int o = 0 ; o < chosenShow.getSal().getSeatsInRow(); o++) {
-                if (seats[i][o] == false ||seats[i][o] == false) {
-                    buttonarray[i][o] = new JButton(i + " - " + o);
-                    buttonarray[i][o].setBackground(Color.GREEN);
-                    seatPanel.add(buttonarray[i][o]);
-                }
-                else {
-                    buttonarray[i][o] = new JButton(i + " - " + 0);
-                    buttonarray[i][o].setBackground(Color.RED);
-                    seatPanel.add(buttonarray[i][o]);
-                }
-            }
-        }
-        centerResPanel.add(seatPanel, BorderLayout.CENTER);
-        
+
         JPanel westResPanel = new JPanel();
         westResPanel.setLayout(new BoxLayout(westResPanel, BoxLayout.Y_AXIS));
         JLabel boxLabel = new JLabel("Choose number of tickets below");
-        
+
+        /** numberBox.addItemListener(
+        new ItemListener() {
+        public void itemStateChanged(ItemEvent event) {
+        if(event.getStateChange() == ItemEvent.SELECTED) {
+        int numberIndex = numberBox.getSelectedIndex();
+        chooseSeats(numberIndex + 1);
+        }
+        }});
+         */
         JPanel boxPanel = new JPanel();
+        seats = chosenShow.getSeatings();
         String numberOptions[] = new String[seats[0].length];
         for (int i = 0; i < seats[0].length ; i++) {
             numberOptions[i] = i + 1 + "";
         }
+
         JComboBox<String> numberBox = new JComboBox<>(numberOptions);
         numberBox.setSelectedIndex(1);
-        numberBox.addItemListener(
-            new ItemListener() {
-                public void itemStateChanged(ItemEvent event) {
-                    if(event.getStateChange() == ItemEvent.SELECTED) {
-                        int numberIndex = numberBox.getSelectedIndex();
-                        chooseSeats(numberIndex + 1);
-                    }
-                }});
+        JButton buttonArray[][] = new JButton[chosenShow.getSal().getRows()][chosenShow.getSal().getSeatsInRow()];
+        JPanel seatPanel = new JPanel(new GridLayout(seats.length, seats[0].length, 0, 10));
+        for(int i = 0 ; i < chosenShow.getSal().getRows(); i++) {
+            for (int o = 0 ; o < chosenShow.getSal().getSeatsInRow(); o++) {
+                if (seats[i][o] == false) {
+                    buttonArray[i][o] = new JButton(i + "-" + o);
+                    buttonArray[i][o].setBackground(Color.GREEN);
+                    seatPanel.add(buttonArray[i][o]);
+                    buttonArray[i][o].addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                chooseSeats((String)e.getActionCommand(), (Integer)numberBox.getSelectedIndex(), chosenShow);
+                            }});
+                }
+                else {
+                    buttonArray[i][o] = new JButton(i + " - " + 0);
+                    buttonArray[i][o].setBackground(Color.RED);
+                    seatPanel.add(buttonArray[i][o]);
+                }
+            }
+        }
+
+        centerResPanel.add(seatPanel, BorderLayout.CENTER);
         boxPanel.add(numberBox);
         westResPanel.add(boxLabel);
         westResPanel.add(boxPanel);
         centerResPanel.add(westResPanel, BorderLayout.WEST);    
+        reservationPanel.add(northResPanel, BorderLayout.NORTH);
         reservationPanel.add(centerResPanel, BorderLayout.CENTER);
-        
+
         //}
         //catch(Exception e) {
         //     JLabel errorLabel = new JLabel("Show could not be found!");
-        //     System.out.println(e.getMessage());
+        //     System.out.println(e.getMessage())
         //     contentPane.add(errorLabel);
         // }
         contentPane.add(reservationPanel);
@@ -361,7 +363,21 @@ public class Gui extends JPanel implements ItemListener {
         reservationWindow.setVisible(true);
     }
 
-    public void chooseSeats(int numTickets) {
-        // seats[numberBox.getSelectedIndex()]
+    public void chooseSeats(String seat, int numTickets, Forestilling show) {
+        boolean rowFound = false;
+        int rowPlace = 0;
+        for (int i = 0; rowFound == false; i++) {
+            if (seat.substring(i, i + 1).equals("-")) {
+                rowFound = true;
+                rowPlace = i;
+            }
+        }
+        int row = Integer.parseInt(seat.substring(0, rowPlace));
+        int seats[] = new int[numTickets];
+        int firstSeat = Integer.parseInt(seat.substring(rowPlace+1,seat.length()));
+        for (int i = 0; i < numTickets; i++) {
+            seats[i] = firstSeat +i;
+        }
+        show.checkIfFree(row, seats);
     }
 }
