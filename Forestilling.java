@@ -121,7 +121,7 @@ public class Forestilling {
 
     public boolean checkIfFree(int row, int[] seats){
         boolean taken = false;
-        for(int i = 0; i < seats[seats.length-1]; i++) {
+        for(int i = 0; i < seats.length; i++) {
             if(pladser[row][seats[i]]) {
                 taken = true;
             }

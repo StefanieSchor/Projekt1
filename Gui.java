@@ -19,7 +19,6 @@ public class Gui extends JPanel implements ItemListener {
     private JFrame frame;
     private int width;
     private int height;
-    private ArrayList<Forestilling> shownShows;
     private int antal;
     private int padding;
     private Image image;
@@ -27,22 +26,23 @@ public class Gui extends JPanel implements ItemListener {
     private JPanel mainWindow;
     private int currentPage;
     private Movie movie;
-    public String[] nextDays;
-    public String[] movieNames;
-    public Date[] next20Dates;
-    JComboBox<String> movieBox;
-    JComboBox<String> DateBox;
-    int chosenDateIndex;
-    int chosenMovieIndex;
-    JPanel centerPanel;
-    JPanel mainWindow2;
-    JPanel mainWindow3;
-    CardLayout cl;
-    JButton buttonArray[][];
-    boolean[][] seats;
+    private String[] nextDays;
+    private String[] movieNames;
+    private Date[] next20Dates;
+    private int chosenDateIndex;
+    private int chosenMovieIndex;
+    private JPanel centerPanel;
+    private JPanel mainWindow2;
+    private JPanel mainWindow3;
+    private CardLayout cl;
+    private JButton buttonArray[][];
+    private boolean[][] seats;
+    private ArrayList<int[]> chosenSeats;
+    private ArrayList<Integer> chosenRows;
+    private Forestilling chosenShow;
     
     public Gui() {
-        getScreenSize();
+        getScreenSize(); 
         next20Dates = new Date[] {null, new Date(116, 0, 1), new Date(116, 0, 2), new Date(116, 0, 3)};
         nextDays = getNext20String();
         movieNames = new String[Movie.getMovies().size()+1];
@@ -203,7 +203,6 @@ public class Gui extends JPanel implements ItemListener {
 
     public void makeGui() {
         frame = new JFrame("Cinematron");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         makeFrontPage(frame.getContentPane());
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -237,7 +236,7 @@ public class Gui extends JPanel implements ItemListener {
     }
 
     public void showShows(int dateIndex, int movieIndex) {
-        shownShows = new ArrayList<Forestilling>();
+        ArrayList<Forestilling> shownShows = new ArrayList<Forestilling>();
         centerPanel.removeAll();
         if (dateIndex != 0 || movieIndex != 0) {
             for (Forestilling show : Forestilling.getShows()) {
@@ -334,7 +333,7 @@ public class Gui extends JPanel implements ItemListener {
                     seatPanel.add(buttonArray[i][o]);
                     buttonArray[i][o].addActionListener(new ActionListener() {
                             public void actionPerformed(ActionEvent e) {
-                                chooseSeats((String)e.getActionCommand(), (Integer)numberBox.getSelectedIndex(), chosenShow);
+                                chooseSeats((String)e.getActionCommand(), (Integer)numberBox.getSelectedIndex()+1, chosenShow);
                             }});
                 }
                 else {
@@ -359,6 +358,7 @@ public class Gui extends JPanel implements ItemListener {
         //     System.out.println(e.getMessage())
         //     contentPane.add(errorLabel);
         // }
+        frame.setDefaultCloseOperation(clearChoices());
         contentPane.add(reservationPanel);
         reservationWindow.pack();
         reservationWindow.setVisible(true);
@@ -380,14 +380,17 @@ public class Gui extends JPanel implements ItemListener {
         for (int i = 0; i < numTickets; i++) {
             seatsArray[i] = firstSeat +i;
         }
-        int moreSeats;
-        String phoneNumber = "";
+        
+        if (show.checkIfFree(row, seatsArray) == false)
+            changeSeatStatus(show, seatsArray, row);
+            System.out.println(JFrame.DISPOSE_ON_CLOSE);
+        /**
         ArrayList<int[]> seatsArrayList = new ArrayList<int[]>();
         ArrayList<Integer> rowsArrayList = new ArrayList<Integer>();
         int numberRows = 1;
         if (show.checkIfFree(row, seatsArray) == false) {
             JOptionPane opPane = new JOptionPane();
-            moreSeats = JOptionPane.showConfirmDialog(null, "Add more seats?", "Options", JOptionPane.YES_NO_OPTION);
+            // moreSeats = JOptionPane.showConfirmDialog(null, "Add more seats?", "Options", JOptionPane.YES_NO_OPTION);
             if (moreSeats == 1) {
                 for (int i = 0; i < numberRows; i++) {
                     seatsArrayList.add(seatsArray);
@@ -398,13 +401,33 @@ public class Gui extends JPanel implements ItemListener {
                 changeSeatStatus(show, seatsArrayList, rowsArrayList);
             }
         }
-        
+        */
     }
     
-    public void changeSeatStatus(Forestilling show, ArrayList<int[]> seatsList, ArrayList<Integer> rowlist) {
-        for (int i = 0; i < rowlist.size(); i++) {
-            for(int o = 0; o < seatsList.get(i).length; o++)
-                    buttonArray[rowlist.get(i)][seatsList.get(i)[o]].setBackground(Color.RED);
+    public void changeSeatStatus(Forestilling show, int[] seatsArray, int row) {
+        chosenSeats = new ArrayList<int[]>();
+        chosenRows = new ArrayList<Integer>();
+        chosenShow = show;
+        for(int i = 0; i < seatsArray.length; i++) {
+            buttonArray[row][seatsArray[i]].setBackground(Color.MAGENTA);
         }
+        chosenSeats.add(seatsArray);
+        chosenRows.add(row);
     }
+    
+    public void orderSeats(Forestilling show) {
+        String phoneNumber = JOptionPane.showInputDialog("Please enter a phonenumber");
+        new Reservation(show, chosenSeats, chosenRows, phoneNumber);
+    }
+    
+    public int clearChoices() {
+        if (chosenSeats != null) 
+            chosenSeats.clear();
+        if (chosenRows != null)
+            chosenRows.clear();
+        if (chosenShow != null)
+            chosenShow = null;
+        return JFrame.DISPOSE_ON_CLOSE;
+    }
+    
 }
